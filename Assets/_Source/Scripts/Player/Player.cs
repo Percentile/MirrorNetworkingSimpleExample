@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Mirror;
+using MirrorTest.Player.Controllers;
 using UnityEngine;
 
 namespace MirrorTest.Player
@@ -8,62 +10,31 @@ namespace MirrorTest.Player
     public class Player : NetworkBehaviour
     {
         [SerializeField] 
-        private CameraController _camera;
+        private PlayerMovementController _movementController;
         
         [SerializeField] 
-        private float _movementMultiplier = .1f;
+        private PlayerRotateController _rotateController;
         
         [SerializeField] 
-        private float _mouseSensivity = 1f;
+        private PlayerDashController _dashController;
 
+        [SerializeField] 
+        private PlayerHitController _hitController;
 
-        public void Start()
+        public void DisableControllers()
         {
-            Cursor.lockState = CursorLockMode.Confined;
-            _camera.SetActive(isLocalPlayer);
-        }
-        
-        private void HandleMovement()
-        {
-            if (!isLocalPlayer) return;
-
-            var moveHorizontal = Input.GetAxis("Horizontal");
-            var moveVertical = Input.GetAxis("Vertical");
-                
-            Vector3 movement = new Vector3(moveHorizontal, 0, moveVertical) * _movementMultiplier;
-            transform.localPosition += movement;
+            _dashController.IsEnabled = false;
+            _movementController.IsEnabled = false;
+            _rotateController.IsEnabled = false;
+            _hitController.IsEnabled = false;
         }
 
-        private void HandleRotate()
+        public void EnableControllers()
         {
-            if(!isLocalPlayer)
-                return;
-
-            var rotateX = Input.GetAxis("Mouse Y") * _mouseSensivity;
-            var rotateY = Input.GetAxis("Mouse X") * _mouseSensivity;
-
-            _camera.Rotate(rotateX, 0);
-            
-            Rotate(rotateY);
-        }
-
-
-        private void Rotate(float rotateY)
-        {
-            var localEulerAngles = transform.localEulerAngles;
-            
-            localEulerAngles = new(
-                0,
-                localEulerAngles.y + rotateY, 
-                0);
-            
-            transform.localEulerAngles = localEulerAngles;
-        }
-
-        public void Update()
-        {
-            HandleMovement();
-            HandleRotate();
+            _dashController.IsEnabled = true;
+            _movementController.IsEnabled = true;
+            _rotateController.IsEnabled = true;
+            _hitController.IsEnabled = true;
         }
     }
 }

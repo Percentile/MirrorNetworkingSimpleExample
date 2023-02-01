@@ -16,13 +16,13 @@ namespace MirrorTest.Player
         public void SetActive(bool isActive)
             => _camera.enabled = isActive;
 
-        public void Rotate(float rotateX, float rotateY)
+        public void RotateVertical(float rotateX)
         {
             var localEulerAngles = transform.localEulerAngles;
             
             localEulerAngles = new(
-                Mathf.Clamp(localEulerAngles.x - rotateX, _minVerticalAngle, _maxVerticalAngle),
-                localEulerAngles.y + rotateY, 
+                Mathf.Clamp(localEulerAngles.x - rotateX, _minVerticalAngle, _maxVerticalAngle) * Time.deltaTime,
+                0, 
                 0);
             
             transform.localEulerAngles = localEulerAngles;

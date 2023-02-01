@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 354219948717651852}
   - component: {fileID: 4688295292673962368}
   - component: {fileID: 8521909687452806822}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -98,8 +98,12 @@ GameObject:
   - component: {fileID: -7634213421365271889}
   - component: {fileID: 7677268001425951202}
   - component: {fileID: -7497634748165124617}
-  - component: {fileID: 7024075481516107041}
-  m_Layer: 0
+  - component: {fileID: 1267682385650192206}
+  - component: {fileID: 3386094834647337547}
+  - component: {fileID: 5668290867212758820}
+  - component: {fileID: 1560029467376834486}
+  - component: {fileID: 3592062151849194645}
+  m_Layer: 6
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -205,9 +209,10 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0.1
-  _camera: {fileID: 9050430968500188187}
-  _movementMultiplier: 0.1
-  _mouseSensivity: 1
+  _movementController: {fileID: 3386094834647337547}
+  _rotateController: {fileID: 5668290867212758820}
+  _dashController: {fileID: 1560029467376834486}
+  _hitController: {fileID: 3592062151849194645}
 --- !u!64 &7677268001425951202
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -251,22 +256,126 @@ MonoBehaviour:
   compressRotation: 0
   positionPrecision: 0.01
   scalePrecision: 0.01
---- !u!54 &7024075481516107041
-Rigidbody:
+--- !u!143 &1267682385650192206
+CharacterController:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8677320490642708191}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
   serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 112
-  m_CollisionDetection: 0
+  m_Height: 2
+  m_Radius: 0.5
+  m_SlopeLimit: 45
+  m_StepOffset: 0.3
+  m_SkinWidth: 0.08
+  m_MinMoveDistance: 0.001
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &3386094834647337547
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8677320490642708191}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77d37fff7f594b3f83a14453a73849ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0.1
+  IsEnabled: 1
+  _characterController: {fileID: 1267682385650192206}
+  _velocity: 10
+  _fallingSpeed: 10
+--- !u!114 &5668290867212758820
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8677320490642708191}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e0c1f4d8899e47ebb5e63ec3a91257f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0.1
+  IsEnabled: 1
+  _camera: {fileID: 9050430968500188187}
+  _mouseSensivity: 1
+--- !u!114 &1560029467376834486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8677320490642708191}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0aa0c0eb8aea4813ba99db746bdf107b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0.1
+  IsEnabled: 1
+  _characterController: {fileID: 1267682385650192206}
+  _dashVelocity: 100
+  _dashDistance: 10
+  OnDashStartEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: -7634213421365271889}
+        m_TargetAssemblyTypeName: MirrorTest.Player.Player, Assembly-CSharp
+        m_MethodName: DisableControllers
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  OnDashEndEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: -7634213421365271889}
+        m_TargetAssemblyTypeName: MirrorTest.Player.Player, Assembly-CSharp
+        m_MethodName: EnableControllers
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &3592062151849194645
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8677320490642708191}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef6a30ee2d504b819fce22f8b4dea44c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0.1
+  IsEnabled: 1
 --- !u!1 &8677320490860473480
 GameObject:
   m_ObjectHideFlags: 0
@@ -277,7 +386,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8677320490860473479}
   - component: {fileID: 9050430968500188187}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Camera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -326,7 +435,7 @@ GameObject:
   - component: {fileID: 8677320490907309499}
   - component: {fileID: 8677320490907309500}
   - component: {fileID: 8677320490907309501}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Main Camera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
