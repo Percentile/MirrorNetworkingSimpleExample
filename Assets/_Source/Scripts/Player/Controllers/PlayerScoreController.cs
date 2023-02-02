@@ -43,7 +43,7 @@ namespace MirrorTest.Player.Controllers
             _score++;
         }
 
-
+        [Command(requiresAuthority = false)]
         public void DropScore()
         {
             _score = 0;
