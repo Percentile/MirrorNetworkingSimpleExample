@@ -60,8 +60,13 @@ namespace MirrorTest.Player.Controllers
                     break;
 
                 _characterController.Move(velocityVector * Time.deltaTime);
+
+                var oldDistanceVector = distanceVector;
                 
                 distanceVector = target - transform.localPosition;
+                
+                if(distanceVector == oldDistanceVector)
+                    break;
                 
                 await Task.Delay(10);
             }

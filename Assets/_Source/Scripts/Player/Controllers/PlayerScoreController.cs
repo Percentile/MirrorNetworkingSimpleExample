@@ -15,7 +15,7 @@ namespace MirrorTest.Player.Controllers
         private TextMeshProUGUI _scoreText;
         
         
-        public int WinScore = 3;
+        private int _winScore = 3;
 
 
         [SyncVar(hook = nameof(SetNameText))]
@@ -43,10 +43,17 @@ namespace MirrorTest.Player.Controllers
             _score++;
         }
 
-        [Command(requiresAuthority = false)]
+        [ClientRpc]
         public void DropScore()
         {
             _score = 0;
+        }
+
+
+        [ClientRpc]
+        public void SetWinScore(int winScore)
+        {
+            _winScore = winScore;
         }
 
 
@@ -54,7 +61,7 @@ namespace MirrorTest.Player.Controllers
         {
             _scoreText.text = $"{_score}";
             
-            if(_score >= WinScore)
+            if(_score >= _winScore)
                 OnWinAction?.Invoke(this);
         }
     }

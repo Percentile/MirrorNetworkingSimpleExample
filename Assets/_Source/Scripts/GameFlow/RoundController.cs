@@ -29,6 +29,8 @@ namespace MirrorTest.GameFlow
 
         private readonly SyncList<PlayerController> _players = new();
 
+        private bool _isRoundFinished;
+
 
         private void Start()
         {
@@ -51,12 +53,11 @@ namespace MirrorTest.GameFlow
         }
         
 
+        [ClientRpc]
         private void MovePlayerTo(PlayerController player, Transform spawnPlace)
         {
             if(spawnPlace == null)
                 return;
-            
-            _availableSpawnPlaces.Remove(spawnPlace);
             
             player.transform.position = spawnPlace.transform.position;
         }
@@ -65,28 +66,43 @@ namespace MirrorTest.GameFlow
         private void ResetRound()
         {
             ResetWinner();
-            _availableSpawnPlaces = _spawnPlaces;
+            SetRoundFinished(false);
+            _availableSpawnPlaces = new(_spawnPlaces);
 
             foreach (var player in _players)
                 ResetPlayer(player);
         }
         
         
-        [ClientRpc]
         private void ResetPlayer(PlayerController player)
         {
-            MovePlayerTo(player, _availableSpawnPlaces?[Random.Range(0, _availableSpawnPlaces.Count - 1)]);
+            var spawnPlace = _availableSpawnPlaces?[Random.Range(0, _availableSpawnPlaces.Count - 1)];
+            MovePlayerTo(player, spawnPlace);
+            _availableSpawnPlaces?.Remove(spawnPlace);
+            
             player.ScoreController.DropScore();
-            player.ScoreController.WinScore = _winScore;
+            player.ScoreController.SetWinScore(_winScore);
         }
         
         
+        [Command(requiresAuthority = false)]
         private void OnWinAction(PlayerScoreController playerScore)
         {
+            if(_isRoundFinished)
+                return;
+
+            SetRoundFinished(true);
+            
             ShowWinner(playerScore.PlayerName);
             
             ResetRoundAsync().FireAndForget();
         }
+
+        
+        [ClientRpc]
+        private void SetRoundFinished(bool isFinished)
+            => _isRoundFinished = isFinished;
+        
 
         [ClientRpc]
         private void ShowWinner(string name)
