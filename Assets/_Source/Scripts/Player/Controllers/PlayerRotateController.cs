@@ -15,7 +15,6 @@ namespace MirrorTest.Player.Controllers
         public void Start()
         {
             Cursor.lockState = CursorLockMode.Confined;
-            Cursor.visible = false;
             _camera.SetActive(isLocalPlayer);
         }
 

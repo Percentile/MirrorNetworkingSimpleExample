@@ -27,12 +27,15 @@ namespace MirrorTest.Player.Controllers
         [SerializeField]
         public UnityEvent OnDashEndEvent;
 
+        [SerializeField]
+        public UnityEvent OnHitOtherPlayerEvent;
+
         private void Dash()
         {
+            _moveCts.Cancel();
             _moveCts = new CancellationTokenSource();
-            var taskScheduler = TaskScheduler.FromCurrentSynchronizationContext();
-
-            Task.Factory.StartNew(async () => await DashAsync(), CancellationToken.None, TaskCreationOptions.None, taskScheduler);
+            
+            DashAsync().FireAndForget();
         }
 
         private async Task DashAsync()
@@ -50,11 +53,9 @@ namespace MirrorTest.Player.Controllers
             while (distanceVector.magnitude > .01f)
             {
                 if (_moveCts.Token.IsCancellationRequested)
-                {
-                    Debug.LogWarning($"Cancellation Requested");
                     break;
-                }
 
+                // Проверяем, не уехали ли слишком далеко
                 if(Math.Sign(distanceVector.x) * Math.Sign(direction.x) < 0 || Math.Sign(distanceVector.y) * Math.Sign(direction.y) < 0 )
                     break;
 
@@ -64,18 +65,33 @@ namespace MirrorTest.Player.Controllers
                 
                 await Task.Delay(10);
             }
-            
-            Debug.LogWarning($"OnDashEndEvent");
 
             OnDashEndEvent.Invoke(); 
         }
 
         private void OnControllerColliderHit(ControllerColliderHit hit)
         {
-            if(hit.collider.gameObject.layer == 7)
-                _moveCts.Cancel();
+            switch (hit.collider.gameObject.layer)
+            {
+                case 7:
+                    _moveCts.Cancel();
+                    break;
+                case 6:
+                {
+                    if(!IsEnabled)
+                        HitOtherPlayer(hit.collider.gameObject.GetComponent<PlayerHitController>());
+                    break;
+                }
+            }
+        }
+
+        [Command]
+        private void HitOtherPlayer(PlayerHitController hitController)
+        {
+            if(hitController.IsEnabled)
+                OnHitOtherPlayerEvent.Invoke();
             
-            
+            hitController.OnHit();
         }
 
         private void Update()

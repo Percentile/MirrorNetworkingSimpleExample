@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace MirrorTest.Player
 {
-    public class Player : NetworkBehaviour
+    public class PlayerController : NetworkBehaviour
     {
         [SerializeField] 
         private PlayerMovementController _movementController;
@@ -21,12 +21,16 @@ namespace MirrorTest.Player
         [SerializeField] 
         private PlayerHitController _hitController;
 
+        [SerializeField] 
+        private PlayerScoreController _scoreController;
+
+        public PlayerScoreController ScoreController => _scoreController;
+
         public void DisableControllers()
         {
             _dashController.IsEnabled = false;
             _movementController.IsEnabled = false;
             _rotateController.IsEnabled = false;
-            _hitController.IsEnabled = false;
         }
 
         public void EnableControllers()
@@ -34,7 +38,6 @@ namespace MirrorTest.Player
             _dashController.IsEnabled = true;
             _movementController.IsEnabled = true;
             _rotateController.IsEnabled = true;
-            _hitController.IsEnabled = true;
         }
     }
 }
