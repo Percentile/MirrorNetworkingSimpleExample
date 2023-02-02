@@ -17,11 +17,12 @@ namespace MirrorTest.Player.Controllers
 
         public void FixedUpdate()
         {
+            HandleFalling();
+            
             if(!IsEnabled)
                 return;
             
             HandleMovement();
-            HandleFalling();
         }
         
         
@@ -43,7 +44,7 @@ namespace MirrorTest.Player.Controllers
 
         private void HandleFalling()
         {
-            if(!isLocalPlayer || _characterController.isGrounded)
+            if(_characterController.isGrounded)
                 return;
 
             var fallVector = new Vector3(0, -_fallingSpeed, 0) * Time.deltaTime;

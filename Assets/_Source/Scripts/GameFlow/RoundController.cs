@@ -77,7 +77,6 @@ namespace MirrorTest.GameFlow
 
         private void OnWinAction(PlayerScoreController playerScore)
         {
-            Debug.LogError($"Player win: {playerScore.PlayerName}");
             ShowWinner(playerScore.PlayerName);
             
             ResetRoundAsync().FireAndForget();
