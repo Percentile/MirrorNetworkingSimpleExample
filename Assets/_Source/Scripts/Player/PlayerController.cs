@@ -2,8 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Mirror;
+using MirrorTest.Network;
 using MirrorTest.Player.Controllers;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace MirrorTest.Player
 {
@@ -23,6 +25,8 @@ namespace MirrorTest.Player
 
         [SerializeField] 
         private PlayerScoreController _scoreController;
+        
+        public UnityAction<PlayerController> OnDestroyAction;
 
         public PlayerScoreController ScoreController => _scoreController;
 
@@ -38,6 +42,19 @@ namespace MirrorTest.Player
             _dashController.IsEnabled = true;
             _movementController.IsEnabled = true;
             _rotateController.IsEnabled = true;
+        }
+
+        private void OnDestroy()
+        {
+            OnDestroyAction?.Invoke(this);
+        }
+
+        public override void OnStartServer()
+        {
+            base.OnStartServer();
+
+            ScoreController.PlayerName = name;
+            ((NetworkManagerExpanded)NetworkManager.singleton).RoundController.ApplySpawnPlayer(this);
         }
     }
 }

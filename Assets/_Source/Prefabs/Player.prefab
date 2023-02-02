@@ -465,7 +465,7 @@ MonoBehaviour:
   _rotateController: {fileID: 5668290867212758820}
   _dashController: {fileID: 1560029467376834486}
   _hitController: {fileID: 3592062151849194645}
-  _scoreController: {fileID: 0}
+  _scoreController: {fileID: 4734437665562851541}
 --- !u!64 &7677268001425951202
 MeshCollider:
   m_ObjectHideFlags: 0

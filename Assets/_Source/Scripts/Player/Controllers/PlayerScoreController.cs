@@ -16,9 +16,10 @@ namespace MirrorTest.Player.Controllers
         
         
         public int WinScore = 3;
-        
-        
-        public string PlayerName { get; private set; }
+
+
+        [SyncVar(hook = nameof(SetNameText))]
+        public string PlayerName;
 
 
         [SyncVar(hook = nameof(OnScoreChange))] 
@@ -31,9 +32,8 @@ namespace MirrorTest.Player.Controllers
         public UnityAction<PlayerScoreController> OnWinAction;
 
 
-        public void SetName(string name)
+        public void SetNameText(string _, string name)
         {
-            PlayerName = name;
             _playerNameText.text = name;
         }
 

@@ -1,14 +1,21 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using _Source.Scripts.Util;
 using Mirror;
 using MirrorTest.Player;
 using MirrorTest.Player.Controllers;
+using TMPro;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace MirrorTest.GameFlow
 {
     public class RoundController : NetworkBehaviour
     {
+        [SerializeField] 
+        private TextMeshProUGUI _winnerText;
+        
         [SerializeField] 
         private int _winScore = 3;
 
@@ -20,18 +27,25 @@ namespace MirrorTest.GameFlow
 
         private List<Transform> _availableSpawnPlaces;
 
-        private List<PlayerController> _players;
+        private readonly SyncList<PlayerController> _players = new();
 
 
-        public void SpawnPlayer(PlayerController playerController)
+        private void Start()
+        {
+            _availableSpawnPlaces = _spawnPlaces;
+        }
+
+
+        public void ApplySpawnPlayer(PlayerController playerController)
         {
             _players.Add(playerController);
             playerController.ScoreController.OnWinAction += OnWinAction;
+            playerController.OnDestroyAction += ApplyDespawnPlayer;
             ResetPlayer(playerController);
         }
 
 
-        public void DespawnPlayer(PlayerController playerController)
+        public void ApplyDespawnPlayer(PlayerController playerController)
         {
             _players.Remove(playerController);
         }
@@ -46,6 +60,7 @@ namespace MirrorTest.GameFlow
 
         private void ResetRound()
         {
+            _winnerText.text = "";
             _availableSpawnPlaces = _spawnPlaces;
 
             foreach (var player in _players)
@@ -58,12 +73,22 @@ namespace MirrorTest.GameFlow
             player.ScoreController.DropScore();
             player.ScoreController.WinScore = _winScore;
         }
+        
 
         private void OnWinAction(PlayerScoreController playerScore)
         {
+            Debug.LogError($"Player win: {playerScore.PlayerName}");
+            ShowWinner(playerScore.PlayerName);
             
+            ResetRoundAsync().FireAndForget();
         }
+        
 
+        [ClientRpc]
+        private void ShowWinner(string name)
+        {
+            _winnerText.text = $"{name} WINS";
+        }
 
         private async Task ResetRoundAsync()
         {
